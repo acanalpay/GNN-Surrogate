@@ -30,7 +30,9 @@ void GHTree::traverse(float threshold){
 	nodes[height - 1][0].traverse(threshold);
 }
 
-void GHTree::cut(){
+vector<int> GHTree::cut(){
+	vector<int> counts;
+
 	assert(nodes[height - 1].size() == 1);
 	assert(nodes[height - 1][0].parent == NULL);
 	for (int i = height - 1; i >= 0; i--) {
@@ -52,8 +54,38 @@ void GHTree::cut(){
 				}	
 			}
 			ghnode.newIdx = count;
+			counts.insert(counts.begin(), count);
+		}
+	}
+	return counts;
+}
+
+void GHTree::contCut(vector<int> counts){
+	bool dene = true;
+	assert(nodes[height - 1].size() == 1);
+	assert(nodes[height - 1][0].parent == NULL);
+	for (int i = height - 1; i >= 0; i--) {
+		int count = counts[i] + 1;
+		for (int j = 0; j < nodes[i].size(); j++) {
+			GHNode& ghnode = nodes[i][j];
+			if (ghnode.parent != NULL && ghnode.parent->merged) {
+				ghnode.proxy = ghnode.parent->proxy;
+			}
+			else {
+				ghnode.proxy = &ghnode;
+			}
+
+			assert(ghnode.newIdx == j);
+			if (j) {
+				GHNode& pre = nodes[i][j - 1];
+				if (ghnode.proxy != pre.proxy){
+					count++;
+				}	
+			}
+			if(dene){
+				std::cout<<"proxy: "<<ghnode.proxy<<std::endl;
+			}
+			ghnode.newIdx = count;
 		}
 	}
 }
-
-

@@ -26,5 +26,6 @@ public:
 
 	GHTree(const vector<int>& graphSizes);
 	void traverse(float threshold);
-	void cut();
+	vector<int> cut();
+	void contCut(vector<int> counts);
 };

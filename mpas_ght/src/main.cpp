@@ -27,6 +27,7 @@ vector<string> filenames;
 char root[1024]; // /users/PAS0027/trainsn/mpas/mpas_graph/res/EC60to30/
 char ghtRoot[1024];    // ../res/EC60to30_0.5/
 vector<int> graphSizes, ghtGraphSizes;
+vector<int> cutNumbers;
 vector<double> temperature;
 vector<vector<vector<int>>> avgPoolAsgnIdx, ghtAvgPoolAsgnIdx, ghtUpAsgnIdx;
 vector<vector<float>> ghtAvgPoolAsgnValue, ghtUpAsgnValue;
@@ -139,7 +140,13 @@ void readAdjValue() {
 		}
 	}
 }
+void writeCutNumbers() {
+	stringstream ss;
+	ss << ghtRoot << "cutLevels.npy";
+	string filename = ss.str();
 
+	cnpy::npy_save(filename.c_str(), &cutNumbers[0], { (size_t)cutNumbers.size() }, "w");
+}
 void writeGhtGraphSizes() {
 	stringstream ss;
 	ss << ghtRoot << "ghtGraphSizes.npy";
@@ -347,10 +354,11 @@ int main(int argc, char **argv) {
 	// cut the graph hierarchical tree given a threshold 
 	ghtree.traverse(threshold);
 	cout << "finish traversing." << endl;
-	ghtree.cut();
+	// to do: Check the file existance
+	cutNumbers = ghtree.cut();
 	cout << "finish cutting." << endl;
 	cout << endl;
-
+	
 	readAdjIdx();
 	readAdjValue();
 
